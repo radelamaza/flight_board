@@ -3,6 +3,7 @@ import { Link as RouterLink } from 'react-router-dom';
 import clsx from 'clsx';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import PropTypes from 'prop-types';
+import { io } from 'socket.io-client';
 import { makeStyles } from '@material-ui/styles';
 import {
   Button,
@@ -16,7 +17,7 @@ import {
   TableCell,
   TableHead,
   TableRow,
-  TableSortLabel,
+  Modal,
   Tooltip,
   colors
 } from '@material-ui/core';
@@ -53,28 +54,54 @@ const labelColors = {
 };
 
 const LatestOrders = props => {
-  const { className, ...rest } = props;
-
+  const { className, flights_socket, ...rest } = props;
+  const [flights, setFlights] = useState(null);
   const classes = useStyles();
-  const [orders, setOrders] = useState(null);
+  const [articleModal, setArticleModal] = useState({
+    open: false,
+    tipe: null,
+    article: null
+  });
+  // const flights_socket = io("wss://tarea-3-websocket.2021-1.tallerdeintegracion.cl", {
+  // path: '/flights'
+  // });
+  flights_socket.on("FLIGHTS", (arg) => {
+    console.log(arg); // world
+    setFlights(arg)
+  });
+
+  const handleModalClose = () => {
+    setArticleModal({
+      open: false,
+      article: null
+    });
+  };
+  let i=0
+  const handleArticleClick = value =>  {
+    //const selected = articles.find(article => article.id === info.article.id);
+    i+=1
+    console.log(value,  i, 'fliht')
+    // setArticleModal({
+    //   open: true,
+    //   tipe: 'edit',
+    //   article: value
+    // });
+  };
+
+
+
+
 
   useEffect(() => {
-    let mounted = true;
+    console.log('pide flights')
+    flights_socket.emit("FLIGHTS");
+    flights_socket.on("FLIGHTS", (arg) => {
+      console.log(arg); // world
+      setFlights(arg)
+    });
 
-    const fetchOrders = () => {
-      axios.get('/api/dashboard/latest-orders').then(response => {
-        if (mounted) {
-          setOrders(response.data.orders);
-        }
-      });
-    };
-
-    fetchOrders();
-
-    return () => {
-      mounted = false;
-    };
   }, []);
+  
 
   return (
     <Card
@@ -83,13 +110,13 @@ const LatestOrders = props => {
     >
       <CardHeader
         action={<GenericMoreButton />}
-        title="Latest Orders"
+        title="Información de vuelos"
       />
       <Divider />
       <CardContent className={classes.content}>
         <PerfectScrollbar options={{ suppressScrollY: true }}>
           <div className={classes.inner}>
-            {orders && (
+            {flights && (
               <Table>
                 <TableHead>
                   <TableRow>
@@ -98,50 +125,43 @@ const LatestOrders = props => {
                         enterDelay={300}
                         title="Sort"
                       >
-                        <TableSortLabel
-                          active
-                          direction="desc"
+                        <TableCell
                         >
-                          Date
-                        </TableSortLabel>
+                          Código
+                        </TableCell>
                       </Tooltip>
                     </TableCell>
-                    <TableCell>Customer</TableCell>
-                    <TableCell>Items</TableCell>
-                    <TableCell>Total</TableCell>
-                    <TableCell>Status</TableCell>
-                    <TableCell align="right">Actions</TableCell>
+                    <TableCell>Aerolinea</TableCell>
+                    <TableCell>Avión</TableCell>
+                    <TableCell>Nro Pasajeros</TableCell>
+                    <TableCell>Asientos</TableCell>
+                    <TableCell align="right">Más</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {orders.map(order => (
+                  {flights.map(flight => (
                     <TableRow
                       hover
-                      key={order.id}
+                      key={flight.code}
                     >
-                      <TableCell>{order.ref}</TableCell>
-                      <TableCell>{order.customer.name}</TableCell>
-                      <TableCell>{order.items}</TableCell>
-                      <TableCell className={classes.totalCell}>
-                        {order.currency} {order.value}
+                      <TableCell>{flight.code}</TableCell>
+                      <TableCell>{flight.airline}</TableCell>
+                      <TableCell>{flight.plane}</TableCell>
+                      <TableCell>{flight.passengers.length}</TableCell>
+                      <TableCell >
+                        {flight.seats} 
                       </TableCell>
-                      <TableCell>
-                        <Label
-                          color={labelColors[order.status]}
-                          variant="outlined"
-                        >
-                          {order.status}
-                        </Label>
-                      </TableCell>
+                      
                       <TableCell align="right">
                         <Button
-                          color="primary"
+                          color="black"
+                          value={'hola'}
                           component={RouterLink}
                           size="small"
-                          to={'management/orders/1'}
+                          to={"/flight_board/"+flight.code}
                           variant="outlined"
                         >
-                          View
+                          Más
                         </Button>
                       </TableCell>
                     </TableRow>
@@ -152,18 +172,6 @@ const LatestOrders = props => {
           </div>
         </PerfectScrollbar>
       </CardContent>
-      <CardActions className={classes.actions}>
-        <Button
-          color="primary"
-          component={RouterLink}
-          size="small"
-          to="management/orders"
-          variant="text"
-        >
-          See all
-          <ArrowForwardIcon className={classes.arrowForwardIcon} />
-        </Button>
-      </CardActions>
     </Card>
   );
 };

@@ -1,135 +1,264 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { useEffect, useState, useRef } from 'react';
+import {
+  Map, Marker, Popup, TileLayer, Polyline
+} from 'react-leaflet';
+import { Icon } from 'leaflet';
+import PropTypes, { func } from 'prop-types';
+import { io } from 'socket.io-client';
 import clsx from 'clsx';
 import { Bar } from 'react-chartjs-2';
 import { makeStyles, useTheme } from '@material-ui/styles';
 import { colors } from '@material-ui/core';
+import './map.scss';
+import 'leaflet/dist/leaflet.css'; 
+import { Height } from '@material-ui/icons';
+
+export const resi = new Icon({
+  iconUrl: 'https://cdn1.iconfinder.com/data/icons/travel-line-good-life/512/plane-512.png',
+  iconSize: [50, 50],
+});
+export const meicon = new Icon({
+  iconUrl: 'https://cdn1.iconfinder.com/data/icons/basic-e-commerce/512/14-512.png',
+  iconSize: [50, 50],
+});
 
 const useStyles = makeStyles(() => ({
   root: {
-    position: 'relative'
+    position: 'relative',
+    height: 400
   }
 }));
+// const flights_socket = io("wss://tarea-3-websocket.2021-1.tallerdeintegracion.cl", {
+//   path: '/flights'
+// });
 
 const Chart = props => {
-  const { data: dataProp, labels, className, ...rest } = props;
-
+  const {  planes, actualData, prevData, flights_socket, className, ...rest } = props;
+  //const [actualData, setactualData] = useState([])
   const classes = useStyles();
+  const [carga, setCarga] = useState(false)
   const theme = useTheme();
-
-  const data = {
-    datasets: [
-      {
-        label: 'This year',
-        backgroundColor: theme.palette.primary.main,
-        data: dataProp.thisYear
-      },
-      {
-        label: 'Last year',
-        backgroundColor: colors.grey[200],
-        data: dataProp.lastYear
-      }
-    ],
-    labels
+  const [vuelos, setVuelos] = useState(prevData);
+  //const [newUserData, setNewUserData] = useState({});
+  const [position, setPosition] = useState(true);
+  const latitudeDefault = -37;
+  const longitudeDefault = -65;
+  const blackOptions = { color: 'black' }
+  const limeOptions = { color: 'lime' }
+  const dataDefault = {
+    latitude: latitudeDefault,
+    longitude: longitudeDefault,
+    vehicle_identifier: '',
   };
+  
 
-  const options = {
-    responsive: true,
-    maintainAspectRatio: false,
-    animation: false,
-    cornerRadius: 20,
-    legend: {
-      display: false
-    },
-    layout: {
-      padding: 0
-    },
-    scales: {
-      xAxes: [
-        {
-          barThickness: 12,
-          maxBarThickness: 10,
-          barPercentage: 0.5,
-          categoryPercentage: 0.5,
-          gridLines: {
-            display: false,
-            drawBorder: false
-          },
-          ticks: {
-            padding: 20,
-            fontColor: theme.palette.text.secondary
-          }
-        }
-      ],
-      yAxes: [
-        {
-          gridLines: {
-            borderDash: [2],
-            borderDashOffset: [2],
-            color: theme.palette.divider,
-            drawBorder: false,
-            zeroLineBorderDash: [2],
-            zeroLineBorderDashOffset: [2],
-            zeroLineColor: theme.palette.divider
-          },
-          ticks: {
-            padding: 20,
-            fontColor: theme.palette.text.secondary,
-            beginAtZero: true,
-            min: 0,
-            maxTicksLimit: 5,
-            callback: value => {
-              return value > 0 ? value + 'K' : value;
-            }
-          }
-        }
-      ]
-    },
-    tooltips: {
-      enabled: true,
-      mode: 'index',
-      intersect: false,
-      caretSize: 10,
-      yPadding: 20,
-      xPadding: 20,
-      borderWidth: 1,
-      borderColor: theme.palette.divider,
-      backgroundColor: theme.palette.white,
-      titleFontColor: theme.palette.text.primary,
-      bodyFontColor: theme.palette.text.secondary,
-      footerFontColor: theme.palette.text.secondary,
-      callbacks: {
-        title: () => {},
-        label: tooltipItem => {
-          let label = `This year: ${tooltipItem.yLabel}`;
+  // flights_socket.on("FLIGHTS", (arg) => {
+  //   //console.log(arg,'argumento');
+  //   setPrevData(arg)
+  //   setCarga(true)
+  //   let arreglo =[]
+  //   var i;
+  //   for (i =0; i<  arg.length; i++) {
+  //     //console.log(actualData.length)
+  //     arreglo.push(
+  //       {
+  //         code: arg[i].code,
+  //         record: [],
+  //         actual: null
+  //       }
+  //     )
+  //   }
+  //   if (arreglo.lenght>0){
+  //     console.log('seguaaarda')
+  //   setactualData(arreglo);}
+  //   console.log(prevData,'prevDrata'); // world
+  //   console.log(actualData,'aactualdataa');
+  //   console.log(carga);
+  // });
 
-          if (tooltipItem.yLabel > 0) {
-            label += 'K';
-          }
 
-          return label;
-        }
-      }
-    }
-  };
 
+
+  let j=0;
+  //  flights_socket.on("POSITION", (arg) => {
+  //       j++;
+  //       if (j==6){
+  //       if (prevData){
+  //        var i;
+  //          let data=[...prevData]
+  //          if(!carga){
+  //           let arreglo =[]
+  //             var i;
+  //             for (i =0; i<  prevData.length; i++) {
+  //               arreglo.push(
+  //                 {
+  //                   code: prevData[i].code,
+  //                   record: [],
+  //                   actual: null
+  //                 }
+  //               )
+  //             }
+  //            setVuelos(arreglo)
+  //            setCarga(true)
+  //          } else{ console.log('cambio de posicion')
+  //        for (i =0; i<  prevData.length; i++) {
+  //         if (arg.code==vuelos[i].code) {
+  //           data[i].actual= arg.position 
+  //        }}
+  //       console.log('voy a guardar')
+  //         setVuelos(data)
+  //     }}
+  //      j=0
+  //     }});
+
+  useEffect(() => {
+    console.log('effect')
+   }, []);
   return (
     <div
       {...rest}
       className={clsx(classes.root, className)}
     >
-      <Bar
-        data={data}
-        options={options}
-      />
+      <div>
+      <Map center={[dataDefault.latitude, dataDefault.longitude]} zoom={4}>
+        <TileLayer
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+          
+        />
+        {/* <Marker
+          key={1}
+          position={[
+            data.latitude,
+            data.longitude,
+          ]}
+          icon={meicon}
+        >
+          <Popup>
+            <p>Mi Posición</p>
+          </Popup>
+        </Marker> */}
+        {/* {planes[0] &&
+        <Marker
+        position={planes}
+        icon={resi}
+      >
+        <Popup>
+          <p>{planes[0]}</p>
+        </Popup>
+      </Marker>} */}
+      {/* {renderPlanes} */}
+         {prevData && prevData.map((pos) => (
+          (pos)
+                && (
+                <Marker
+                  position={pos.origin}
+                  icon={meicon}
+                >
+                  <Popup>
+                    <p>
+                      Origen
+                      
+                    </p>
+
+                  </Popup> 
+                </Marker>
+                
+                )
+          
+
+        ))} 
+        {prevData && prevData.map((pos) => (
+          (pos)
+                && (
+                <Marker
+                  position={pos.destination}
+                  icon={meicon}
+                >
+                  <Popup>
+                    <p>
+                      Destino
+                      
+                    </p>
+
+                  </Popup> 
+                </Marker>
+               
+                
+                )
+          
+
+        ))} 
+        {prevData && prevData.map((pos) => (
+          (pos)
+                && (
+                <Polyline pathOptions={blackOptions} positions={[pos.origin,pos.destination]}/>
+               
+                
+                )
+          
+
+        ))} 
+        {/* {actualData && actualData.map((vuelo) => (
+          (vuelo.acual)
+                && (
+                <Polyline pathOptions={limeOptions} positions={vuelo.record}/>
+                )
+          
+
+        ))}  */}
+        {/* {actualData && actualData.map((vuelo) => (
+          (vuelo.actual)
+                && (
+                  <Marker
+                  position={vuelo.actual}//vuelo.record[-1]
+                  icon={resi}
+                >
+                  <Popup>
+                    <p>
+                      {vuelo.code}
+                      
+                    </p>
+
+                  </Popup> 
+                </Marker>
+               
+                
+                )
+          
+
+        ))}  */}
+        {vuelos && vuelos.map((vuelo) => (
+          (vuelo.actual)
+                && (
+                  <Marker
+                  position={vuelo.actual}//vuelo.record[-1]
+                  icon={resi}
+                >
+                  <Popup>
+                    <p>
+                      {vuelo.code}
+                      
+                    </p>
+
+                  </Popup> 
+                </Marker>
+               
+                
+                )
+          
+
+        ))} 
+        
+
+      </Map>
+    </div>
     </div>
   );
 };
 
 Chart.propTypes = {
-  className: PropTypes.string,
-  data: PropTypes.object.isRequired,
-  labels: PropTypes.array.isRequired
+  className: PropTypes.string
 };
 
 export default Chart;

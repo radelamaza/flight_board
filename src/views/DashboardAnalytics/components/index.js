@@ -6,3 +6,4 @@ export { default as Overview } from './Overview';
 export { default as TopReferrals } from './TopReferrals';
 export { default as CustomerActivity } from './CustomerActivity';
 export { default as LatestOrders } from './LatestOrders';
+export { default as ConversationDetails} from './ConversationDetails'

@@ -56,18 +56,18 @@ const Dashboard = props => {
         onOpenNavBarMobile={handleNavBarMobileOpen}
       />
       <div className={classes.container}>
-        <NavBar
+        {/* <NavBar
           className={classes.navBar}
           onMobileClose={handleNavBarMobileClose}
           openMobile={openNavBarMobile}
-        />
+        /> */}
         <main className={classes.content}>
           <Suspense fallback={<LinearProgress />}>
             {renderRoutes(route.routes)}
           </Suspense>
         </main>
       </div>
-      <ChatBar />
+      {/* <ChatBar /> */}
     </div>
   );
 };

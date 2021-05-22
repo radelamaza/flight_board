@@ -15,7 +15,7 @@ const routes = [
   {
     path: '/',
     exact: true,
-    component: () => <Redirect to="/presentation" />
+    component: () => <Redirect to="/flight_board/overview" />
   },
   {
     path: '/auth',
@@ -85,15 +85,15 @@ const routes = [
         component: lazy(() => import('views/Chat'))
       },
       {
-        path: '/dashboards/analytics',
+        path: '/flight_board/overview',
         exact: true,
         component: DashboardAnalyticsView
       },
-      {
-        path: '/dashboards/default',
-        exact: true,
-        component: DashboardDefaultView
-      },
+      // {
+      //   path: '/flight_board/:id',
+      //   exact: true,
+      //   component: lazy(() => import('views/Episodio'))
+      // },
       {
         path: '/invoices/:id',
         exact: true,
@@ -139,11 +139,7 @@ const routes = [
         exact: true,
         component: lazy(() => import('views/OrderManagementDetails'))
       },
-      {
-        path: '/overview',
-        exact: true,
-        component: OverviewView
-      },
+      
       {
         path: '/presentation',
         exact: true,
@@ -200,7 +196,7 @@ const routes = [
         component: lazy(() => import('views/GettingStarted'))
       },
       {
-        component: () => <Redirect to="/errors/error-404" />
+        component: () => <Redirect to="/flight_board/overview" />
       }
     ]
   }

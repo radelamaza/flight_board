@@ -19,35 +19,18 @@ const useStyles = makeStyles(theme => ({
     minWidth: 700
   },
   chart: {
-    padding: theme.spacing(4, 2, 0, 2),
+    padding: 0,
     height: 400
   }
 }));
 
 const FinancialStats = props => {
-  const { className, ...rest } = props;
+  const { className,prevData, position, actualData,flights_socket, ...rest } = props;
 
   const classes = useStyles();
 
-  const data = {
-    thisYear: [18, 16, 5, 8, 3, 14, 14, 16, 17, 19, 18, 20],
-    lastYear: [12, 11, 4, 6, 2, 9, 9, 10, 11, 12, 13, 13]
-  };
 
-  const labels = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec'
-  ];
+  
 
   return (
     <Card
@@ -56,7 +39,7 @@ const FinancialStats = props => {
     >
       <CardHeader
         action={<GenericMoreButton />}
-        title="Financial Stats"
+        title="Mapa en vivo"
       />
       <Divider />
       <CardContent className={classes.content}>
@@ -64,8 +47,11 @@ const FinancialStats = props => {
           <div className={classes.inner}>
             <Chart
               className={classes.chart}
-              data={data}
-              labels={labels}
+              planes={position}
+              prevData={prevData}
+              actualData={actualData}
+              flights_socket={flights_socket}
+              // setactualData={setactualData}
             />
           </div>
         </PerfectScrollbar>

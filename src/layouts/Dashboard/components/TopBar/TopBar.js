@@ -42,6 +42,10 @@ const useStyles = makeStyles(theme => ({
     shadowRadius: 1, 
     }
   },
+  movieIcon: {
+    marginRight: theme.spacing(1),
+    height: 50,
+  },
   flexGrow: {
     flexGrow: 1
   },
@@ -167,68 +171,16 @@ const TopBar = props => {
     >
       <Toolbar>
         <RouterLink to="/">
-          <img
+          <img className={classes.movieIcon}
             alt="Logo"
-            src="/images/logos/logo--red.png"
+            src="https://github.com/radelamaza/RDLMovies/blob/master/public/images/logos/movielogo1.png?raw=true"
             
           />
         </RouterLink>
         <div className={classes.flexGrow} />
-        <Hidden smDown>
-          <Button
-            className={classes.trialButton}
-            onClick={handlePricingOpen}
-            variant="contained"
-          >
-            <LockIcon className={classes.trialIcon} />
-            Racs
-          </Button>
-        </Hidden>
-        <Hidden mdDown>
-          <IconButton
-            className={classes.notificationsButton}
-            color="inherit"
-            onClick={handleNotificationsOpen}
-            ref={notificationsRef}
-          >
-            <Badge
-              badgeContent={notifications.length}
-              classes={{ badge: classes.notificationsBadge }}
-              variant="dot"
-            >
-              <NotificationsIcon />
-            </Badge>
-          </IconButton>
-
-          
-          <Button
-            className={classes.logoutButton}
-            color="inherit"
-            onClick={handleLogout}
-          >
-            <InputIcon className={classes.logoutIcon} />
-            cerrar
-          </Button>
-        </Hidden>
-        <Hidden lgUp>
-          <IconButton
-            color="inherit"
-            onClick={onOpenNavBarMobile}
-          >
-            <MenuIcon />
-          </IconButton>
-        </Hidden>
+      
+        
       </Toolbar>
-      <PricingModal
-        onClose={handlePricingClose}
-        open={pricingModalOpen}
-      />
-      <NotificationsPopover
-        anchorEl={notificationsRef.current}
-        notifications={notifications}
-        onClose={handleNotificationsClose}
-        open={openNotifications}
-      />
     </AppBar>
   );
 };
