@@ -89,11 +89,11 @@ const routes = [
         exact: true,
         component: DashboardAnalyticsView
       },
-      // {
-      //   path: '/flight_board/:id',
-      //   exact: true,
-      //   component: lazy(() => import('views/Episodio'))
-      // },
+      {
+        path: '/flight_board/:id',
+        exact: true,
+        component: lazy(() => import('views/Episodio'))
+      },
       {
         path: '/invoices/:id',
         exact: true,
