@@ -173,7 +173,7 @@ const TopBar = props => {
         <RouterLink to="/">
           <img className={classes.movieIcon}
             alt="Logo"
-            src="https://www.iconsdb.com/icons/preview/black/airplane-57-xxl.png"
+            src="https://github.com/radelamaza/flight_board/blob/main/public/images/logos/airplane-57-xxl.png?raw=true"
             
           />
         </RouterLink>

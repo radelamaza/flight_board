@@ -25,15 +25,15 @@ export const meicon = new Icon({
 const useStyles = makeStyles(() => ({
   root: {
     position: 'relative',
-    height: 400
+    height: 440
   }
 }));
-// const flights_socket = io("wss://tarea-3-websocket.2021-1.tallerdeintegracion.cl", {
-//   path: '/flights'
-// });
+const flights_socket = io("wss://tarea-3-websocket.2021-1.tallerdeintegracion.cl", {
+  path: '/flights'
+});
 
 const Chart = props => {
-  const {  planes, actualData, prevData, flights_socket, className, ...rest } = props;
+  const {  planes, actualData, prevData,  className, ...rest } = props;
   //const [actualData, setactualData] = useState([])
   const classes = useStyles();
   const [carga, setCarga] = useState(false)
@@ -80,36 +80,36 @@ const Chart = props => {
 
 
   let j=0;
-  //  flights_socket.on("POSITION", (arg) => {
-  //       j++;
-  //       if (j==6){
-  //       if (prevData){
-  //        var i;
-  //          let data=[...prevData]
-  //          if(!carga){
-  //           let arreglo =[]
-  //             var i;
-  //             for (i =0; i<  prevData.length; i++) {
-  //               arreglo.push(
-  //                 {
-  //                   code: prevData[i].code,
-  //                   record: [],
-  //                   actual: null
-  //                 }
-  //               )
-  //             }
-  //            setVuelos(arreglo)
-  //            setCarga(true)
-  //          } else{ console.log('cambio de posicion')
-  //        for (i =0; i<  prevData.length; i++) {
-  //         if (arg.code==vuelos[i].code) {
-  //           data[i].actual= arg.position 
-  //        }}
-  //       console.log('voy a guardar')
-  //         setVuelos(data)
-  //     }}
-  //      j=0
-  //     }});
+   flights_socket.on("POSITION", (arg) => {
+        j++;
+        if (j==6){
+        if (prevData){
+         var i;
+           let data=[...prevData]
+           if(!carga){
+            let arreglo =[]
+              var i;
+              for (i =0; i<  prevData.length; i++) {
+                arreglo.push(
+                  {
+                    code: prevData[i].code,
+                    record: [],
+                    actual: null
+                  }
+                )
+              }
+             setVuelos(arreglo)
+             setCarga(true)
+           } else{ console.log('cambio de posicion')
+         for (i =0; i<  prevData.length; i++) {
+          if (arg.code==vuelos[i].code) {
+            data[i].actual= arg.position 
+         }}
+        console.log('voy a guardar')
+          setVuelos(data)
+      }}
+       j=0
+      }});
 
   useEffect(() => {
     console.log('effect')
@@ -119,7 +119,6 @@ const Chart = props => {
       {...rest}
       className={clsx(classes.root, className)}
     >
-      <div>
       <Map center={[dataDefault.latitude, dataDefault.longitude]} zoom={4}>
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -252,7 +251,6 @@ const Chart = props => {
         
 
       </Map>
-    </div>
     </div>
   );
 };
