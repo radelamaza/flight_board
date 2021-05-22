@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import { makeStyles } from '@material-ui/styles';
 import { Card, CardHeader, CardContent, Divider } from '@material-ui/core';
-
+import flights_socket from 'websocket';
 import { GenericMoreButton } from 'components';
 import { Chart } from './components';
 
@@ -25,7 +25,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const FinancialStats = props => {
-  const { className,prevData, position, actualData,flights_socket, ...rest } = props;
+  const { className,prevData, position, actualData, ...rest } = props;
 
   const classes = useStyles();
 
@@ -38,7 +38,6 @@ const FinancialStats = props => {
       className={clsx(classes.root, className)}
     >
       <CardHeader
-        action={<GenericMoreButton />}
         title="Mapa en vivo"
       />
       <Divider />
@@ -50,7 +49,7 @@ const FinancialStats = props => {
               planes={position}
               prevData={prevData}
               actualData={actualData}
-              flights_socket={flights_socket}
+              
               // setactualData={setactualData}
             />
           </div>

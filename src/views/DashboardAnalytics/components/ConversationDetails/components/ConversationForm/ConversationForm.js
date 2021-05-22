@@ -10,6 +10,7 @@ import {
   Paper,
   Tooltip
 } from '@material-ui/core';
+import flights_socket from 'websocket';
 import SendIcon from '@material-ui/icons/Send';
 import AddPhotoIcon from '@material-ui/icons/AddPhotoAlternate';
 import AttachFileIcon from '@material-ui/icons/AttachFile';
@@ -42,7 +43,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const ConversationForm = props => {
-  const { flights_socket, className, ...rest } = props;
+  const { className, ...rest } = props;
 
   const classes = useStyles();
 

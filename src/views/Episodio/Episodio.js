@@ -5,6 +5,7 @@ import { Page, SearchBar } from 'components';
 import clsx from 'clsx';
 import { Grid } from '@material-ui/core';
 import { Header, Actors, EpisodeInfo } from './components';
+import flights_socket from 'websocket';
 import { Button } from '@material-ui/core';
 import { io } from 'socket.io-client';
 const useStyles = makeStyles(theme => ({
@@ -19,9 +20,6 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const flights_socket = io("wss://tarea-3-websocket.2021-1.tallerdeintegracion.cl", {
-  path: '/flights'
-});
 const Episodio = props => {
   const { match, history ,className, ...rest} = props;
   const classes = useStyles();

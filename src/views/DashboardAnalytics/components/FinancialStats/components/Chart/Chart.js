@@ -8,7 +8,7 @@ import { io } from 'socket.io-client';
 import clsx from 'clsx';
 import { Bar } from 'react-chartjs-2';
 import { makeStyles, useTheme } from '@material-ui/styles';
-import { colors } from '@material-ui/core';
+import flights_socket from 'websocket';
 import './map.scss';
 import 'leaflet/dist/leaflet.css'; 
 import { Height } from '@material-ui/icons';
@@ -28,9 +28,6 @@ const useStyles = makeStyles(() => ({
     height: 440
   }
 }));
-const flights_socket = io("wss://tarea-3-websocket.2021-1.tallerdeintegracion.cl", {
-  path: '/flights'
-});
 
 const Chart = props => {
   const {  planes, actualData, prevData,  className, ...rest } = props;
@@ -82,7 +79,7 @@ const Chart = props => {
   let j=0;
    flights_socket.on("POSITION", (arg) => {
         j++;
-        if (j==6){
+        if (j==27){
         if (prevData){
          var i;
            let data=[...prevData]

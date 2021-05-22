@@ -3,7 +3,7 @@ import { Link as RouterLink } from 'react-router-dom';
 import clsx from 'clsx';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import PropTypes from 'prop-types';
-import { io } from 'socket.io-client';
+import flights_socket from 'websocket';
 import { makeStyles } from '@material-ui/styles';
 import {
   Button,
@@ -54,7 +54,7 @@ const labelColors = {
 };
 
 const LatestOrders = props => {
-  const { className, flights_socket, ...rest } = props;
+  const { className,  ...rest } = props;
   const [flights, setFlights] = useState(null);
   const classes = useStyles();
   const [articleModal, setArticleModal] = useState({
@@ -109,7 +109,6 @@ const LatestOrders = props => {
       className={clsx(classes.root, className)}
     >
       <CardHeader
-        action={<GenericMoreButton />}
         title="Información de vuelos"
       />
       <Divider />

@@ -8,6 +8,7 @@ import {
   ConversationMessages,
   ConversationForm
 } from './components';
+import flights_socket from 'websocket';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -24,7 +25,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const ConversationDetails = props => {
-  const { flights_socket, className, ...rest } = props;
+  const {  className, ...rest } = props;
 
   const classes = useStyles();
 
@@ -38,9 +39,9 @@ const ConversationDetails = props => {
       />
       {/* <ConversationToolbar conversation={conversation} /> */}
       <Divider />
-      <ConversationMessages className={classes.chat} flights_socket={flights_socket} />
+      <ConversationMessages className={classes.chat}  />
       <Divider />
-      <ConversationForm flights_socket={flights_socket}/>
+      <ConversationForm />
     </Card>
   );
 };

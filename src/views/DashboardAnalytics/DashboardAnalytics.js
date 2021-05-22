@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/styles';
 import { Grid } from '@material-ui/core';
 // ES6 import or TypeScript
 import { io } from 'socket.io-client';
-
+import flights_socket from 'websocket';
 import { Page } from 'components';
 import {
   ConversationDetails,
@@ -30,9 +30,7 @@ const useStyles = makeStyles(theme => ({
 //const io = require("socket.io-client");
 //const socket = io("wss://tarea-3-websocket.2021-1.tallerdeintegracion.cl");
 
-const flights_socket = io("wss://tarea-3-websocket.2021-1.tallerdeintegracion.cl", {
-  path: '/flights'
-});
+
 
 const DashboardAnalytics = () => {
   const classes = useStyles();
@@ -144,7 +142,7 @@ const DashboardAnalytics = () => {
           xl={9}
           xs={12}
         >
-          <FinancialStats  prevData={prevData} position={position} actualData={actualData} flights_socket={flights_socket}  />
+          <FinancialStats  prevData={prevData} position={position} actualData={actualData}   />
         </Grid>
         <Grid
           item
@@ -153,7 +151,7 @@ const DashboardAnalytics = () => {
           xs={3}
         >
           {/* <EarningsSegmentation /> */}
-          <ConversationDetails className={classes.top} flights_socket={flights_socket}
+          <ConversationDetails className={classes.top} 
           /> 
         </Grid>
         <Grid
@@ -161,7 +159,7 @@ const DashboardAnalytics = () => {
           lg={8}
           xs={12}
         >
-          <LatestOrders flights_socket={flights_socket} />
+          <LatestOrders  />
         </Grid>
         
       </Grid>

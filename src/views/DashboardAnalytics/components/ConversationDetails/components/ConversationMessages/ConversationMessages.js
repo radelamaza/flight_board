@@ -5,7 +5,7 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 import { makeStyles } from '@material-ui/styles';
 import React, { useState, useEffect } from 'react';
 import ConversationMessage from '../ConversationMessage';
-
+import flights_socket from 'websocket';
 const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1,
@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const ConversationMessages = props => {
-  const {  flights_socket,className, ...rest } = props;
+  const { className, ...rest } = props;
  
   const [chat, setChat] = useState([]);
   const classes = useStyles();
