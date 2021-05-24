@@ -25,7 +25,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const ConversationDetails = props => {
-  const {  className, ...rest } = props;
+  const {  className, chat, ...rest } = props;
 
   const classes = useStyles();
 
@@ -39,7 +39,7 @@ const ConversationDetails = props => {
       />
       {/* <ConversationToolbar conversation={conversation} /> */}
       <Divider />
-      <ConversationMessages className={classes.chat}  />
+      <ConversationMessages chat={chat} className={classes.chat}  />
       <Divider />
       <ConversationForm />
     </Card>

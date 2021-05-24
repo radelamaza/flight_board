@@ -18,17 +18,9 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const ConversationMessages = props => {
-  const { className, ...rest } = props;
- 
-  const [chat, setChat] = useState([]);
+  const { className, chat, ...rest } = props;
   const classes = useStyles();
-  flights_socket.on("CHAT", async (arg) => {
-      console.log(arg); // world
-      //setChat(arg);
-      let tempArr = [...chat];
-       tempArr.push(arg);
-       setChat(tempArr);
-    });
+  
 
   return (
     <div

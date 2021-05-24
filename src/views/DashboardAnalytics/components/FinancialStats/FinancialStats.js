@@ -25,7 +25,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const FinancialStats = props => {
-  const { className,prevData, position, actualData, ...rest } = props;
+  const { className,prevData, position, actualData, vuelos, ...rest } = props;
 
   const classes = useStyles();
 
@@ -46,9 +46,9 @@ const FinancialStats = props => {
           <div className={classes.inner}>
             <Chart
               className={classes.chart}
-              planes={position}
               prevData={prevData}
               actualData={actualData}
+              planes={vuelos}
               
               // setactualData={setactualData}
             />

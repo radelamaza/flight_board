@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import {
-  Map, Marker, Popup, TileLayer, Polyline
+  Map, Marker, Popup, Tooltip,TileLayer, Polyline
 } from 'react-leaflet';
 import { Icon } from 'leaflet';
 import PropTypes, { func } from 'prop-types';
@@ -12,6 +12,7 @@ import flights_socket from 'websocket';
 import './map.scss';
 import 'leaflet/dist/leaflet.css'; 
 import { Height } from '@material-ui/icons';
+import { isNull } from 'lodash-es';
 
 export const resi = new Icon({
   iconUrl: 'https://cdn1.iconfinder.com/data/icons/travel-line-good-life/512/plane-512.png',
@@ -30,12 +31,15 @@ const useStyles = makeStyles(() => ({
 }));
 
 const Chart = props => {
-  const {  planes, actualData, prevData,  className, ...rest } = props;
+  const {  planes, actualData, prevData,  className, ...rest  } = props;
   //const [actualData, setactualData] = useState([])
   const classes = useStyles();
-  const [carga, setCarga] = useState(false)
+  const [vuelos, setVuelos] = useState(null)
+  //const [carga, setCarga] = useState(false)
   const theme = useTheme();
-  const [vuelos, setVuelos] = useState(prevData);
+  // var data=[]
+  // if(vuelos) {console.log(vuelos,'vuelos')
+  //    vuelos.forEach((vuelo)=>{data.push(vuelo)})}
   //const [newUserData, setNewUserData] = useState({});
   const [position, setPosition] = useState(true);
   const latitudeDefault = -37;
@@ -76,40 +80,79 @@ const Chart = props => {
 
 
 
-  let j=0;
-   flights_socket.on("POSITION", (arg) => {
-        j++;
-        if (j==27){
-        if (prevData){
-         var i;
-           let data=[...prevData]
-           if(!carga){
-            let arreglo =[]
-              var i;
-              for (i =0; i<  prevData.length; i++) {
-                arreglo.push(
-                  {
-                    code: prevData[i].code,
-                    record: [],
-                    actual: null
-                  }
-                )
-              }
-             setVuelos(arreglo)
-             setCarga(true)
-           } else{ console.log('cambio de posicion')
-         for (i =0; i<  prevData.length; i++) {
-          if (arg.code==vuelos[i].code) {
-            data[i].actual= arg.position 
-         }}
-        console.log('voy a guardar')
-          setVuelos(data)
-      }}
-       j=0
-      }});
-
+  // let j=0;
+  // flights_socket.on("POSITION", (arg) => {
+  //   console.log(arg)
+  //   j++;
+  //   if (j==27){
+  //   if (prevData){
+  //     var i;
+  //       let data=[...prevData]
+  //       if(!carga){
+  //       let arreglo =[]
+  //         var i;
+  //         for (i =0; i<  prevData.length; i++) {
+  //           arreglo.push(
+  //             {
+  //               code: prevData[i].code,
+  //               record: [],
+  //               actual: null
+  //             }
+  //           )
+  //         }
+  //       setVuelos(arreglo)
+  //       setCarga(true)
+  //       } else { 
+  //       var vuelosData = [...vuelos]
+  //       console.log(vuelos)
+  //       console.log('cambio de posicion')
+  //       for (i =0; i < prevData.length; i++) {
+  //         if (arg.code === vuelos[i].code) {
+  //           vuelosData[i].actual = arg.position 
+  //       }}
+  //       setVuelos(vuelosData)
+  //     }
+  //   }
+  //   j=0
+  // }})
+  var dictVuelos={}
+  var Arrrecord=[]
+  flights_socket.once("FLIGHTS", (arg) => {
+    var i;
+    for (i =0; i<  arg.length; i++) {
+      dictVuelos[i]=
+        {
+          code: arg[i].code,
+          record: [],
+          actual: null
+        }
+    }
+    console.log(dictVuelos,'llebabbbfdafdafdafdaewfwaefdafdsafd')
+    setPosition(arg.length)
+    setVuelos(dictVuelos)
+  })
+  flights_socket.on("POSITION", (arg) => {
+    
+    
+    
+    //console.log(dictVuelos,'vuelos antes')
+  if (dictVuelos && dictVuelos[0]){
+    var i;
+        //dictVuelos=vuelos
+        //console.log(dictVuelos.length,'cambio de posicion')
+        for (i =0; i < position; i++) {
+          if (arg.code === dictVuelos[i].code) {
+            dictVuelos[i].actual = arg.position 
+            Arrrecord=dictVuelos[i].record
+            Arrrecord.push(arg.position);
+            dictVuelos[i].record=Arrrecord
+        }}
+        setVuelos(dictVuelos)
+    
+  }
+})
   useEffect(() => {
-    console.log('effect')
+    
    }, []);
   return (
     <div
@@ -224,26 +267,30 @@ const Chart = props => {
           
 
         ))}  */}
-        {vuelos && vuelos.map((vuelo) => (
-          (vuelo.actual)
-                && (
-                  <Marker
-                  position={vuelo.actual}//vuelo.record[-1]
-                  icon={resi}
-                >
-                  <Popup>
-                    <p>
-                      {vuelo.code}
-                      
-                    </p>
-
-                  </Popup> 
-                </Marker>
-               
-                
-                )
+        {vuelos && Object.keys(vuelos).map((vuelo) => (   //bject.keys(vuelos).map((vuelo) 
           
+          (vuelos[vuelo].record.length>2) && (
+            <Polyline color={'lime'} positions={vuelos[vuelo].record}/>
+          )
+       
+))}
+        {vuelos && Object.keys(vuelos).map((vuelo) => (   //bject.keys(vuelos).map((vuelo) 
+          
+                  (vuelos[vuelo].actual) && (
+                      <Marker
+  position={vuelos[vuelo].actual}//vuelo.record[-1]
+  icon={resi}
+>
+  <Tooltip>
+    <p>
+      {vuelos[vuelo].code}
+      
+    </p>
 
+  </Tooltip> 
+</Marker>
+                  )
+               
         ))} 
         
 
@@ -257,3 +304,20 @@ Chart.propTypes = {
 };
 
 export default Chart;
+
+// (
+//   <Marker
+//   position={vuelo.actual}//vuelo.record[-1]
+//   icon={resi}
+// >
+//   <Popup>
+//     <p>
+//       {vuelo.code}
+      
+//     </p>
+
+//   </Popup> 
+// </Marker>
+
+
+// )

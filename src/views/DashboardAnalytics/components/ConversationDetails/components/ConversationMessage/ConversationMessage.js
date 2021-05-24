@@ -96,7 +96,7 @@ const ConversationMessage = props => {
               className={classes.time}
               variant="body2"
             >
-              {moment(message.date).fromNow()}
+              {Date(message.date)}
             </Typography>
           </div>
         </div>
@@ -111,3 +111,4 @@ ConversationMessage.propTypes = {
 };
 
 export default ConversationMessage;
+// moment(message.date).fromNow()

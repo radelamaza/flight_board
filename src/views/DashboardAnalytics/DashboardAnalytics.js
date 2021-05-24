@@ -30,7 +30,7 @@ const useStyles = makeStyles(theme => ({
 //const io = require("socket.io-client");
 //const socket = io("wss://tarea-3-websocket.2021-1.tallerdeintegracion.cl");
 
-
+flights_socket.emit("FLIGHTS");
 
 const DashboardAnalytics = () => {
   const classes = useStyles();
@@ -38,86 +38,65 @@ const DashboardAnalytics = () => {
   const [prevData, setPrevData] = useState(null);
   const [actualData, setactualData] = useState([]);
   const [carga, setCarga] = useState(false);
+  const [chat, setChat] = useState([])
+  const [vuelos, setVuelos] = useState(null);
+  var dictPrevData={}
+  var dictActualData={}
+  var dictChat={}
+  var dictVuelos={}
   
-  flights_socket.on("FLIGHTS", (arg) => {
-    console.log(arg,'argumento');
-    setPrevData(arg)
-    setCarga(true)
-    let arreglo =[]
-    var i;
-    for (i =0; i<  arg.length; i++) {
-      //console.log(actualData.length)
-      arreglo.push(
-        {
-          code: arg[i].code,
-          record: [],
-          actual: null
-        }
-      )
-    }
-    setactualData(arreglo);
-    console.log(prevData,'prevDrata'); // world
-    console.log(arreglo);
-    console.log(carga);
-  });
-  // flights_socket.on("CHAT", async (arg) => {
-  //   console.log(arg); // world
-  //   //setChat(arg);
-  //   let tempArr = [...chat];
-  //    tempArr.push(arg);
-  //    setChat(tempArr);
-  // });
-  // async function agregar(arg) {
-  //   await forEach(actualData, (vuelo) => {
-
-  //   })
-  // }
   let j=0;
-  // flights_socket.on("POSITION", (arg) => {
-  //   setPosition(arg)
-  //   console.log(position)
-  // });
-  // flights_socket.on("POSITION", (arg) => {
-  //    //console.log(arg.position); // world
-      
-  //     j++;
-  //     if (j==13){
-  //     if (actualData.length>0){
-  //       let i=0;
-  //       let data=[...actualData]
-  //     for (i =0; i<  actualData.length; i++) {
-  //       if (arg.code==actualData[i].code) {
-  //         data[i]={
-  //           code: arg.code,
-  //           record: [],
-  //           actual: arg.position
-  //         }
-       
-  //     }}
-     
-  //     setactualData(data)
-  //     //console.log(actualData, 'Fuera Loop')
-  //   } else {
-  //     console.log('no se han cargaado los datos')
-  //   }
-  //   j=0
-  //    }});
-  // flights_socket.on("POSITION", (arg) => {
-    
-  //   if (j==4){
-  //   console.log(arg,j); // world
-  //   j=0}
-  //   j++;
-  //   });
-    
-  
+
   useEffect(() => {
-    if (!carga) {
     console.log('pide flights')
-    flights_socket.emit("FLIGHTS");
-    }
-    console.log('effect')
+    flights_socket.once("FLIGHTS", (arg) => {
+      console.log(arg,'argumento');
+      setPrevData(arg)
+      setCarga(true)
+      var i;
+      for (i =0; i<  arg.length; i++) {
+        console.log('llenando vuelos')
+        dictVuelos[i]=
+          {
+            code: arg[i].code,
+            record: [],
+            actual: null
+          }
+      }
+      console.log(dictVuelos,'prevDrata'); 
+      setactualData(dictVuelos);
+      setVuelos(dictVuelos)
+    })
   }, []);
+  useEffect(() => {
+  //   flights_socket.on("POSITION", (arg) => {
+  //     if (vuelos){
+  //       console.log(vuelos[0],'vuelo primero')
+  //     }
+  //     console.log(vuelos,'vuelos antes')
+  //   if (vuelos && vuelos[0]){
+  //     var i;
+  //         dictVuelos=vuelos
+  //         console.log('cambio de posicion')
+  //         for (i =0; i < prevData.length; i++) {
+  //           if (arg.code === vuelos[i].code) {
+  //             dictVuelos[i].actual = arg.position 
+  //         }}
+  //         setVuelos(dictVuelos)
+      
+  //   }
+  // })
+    let tempArr=[]
+  flights_socket.on("CHAT", async (arg) => {
+    console.log(arg); // world
+    //setChat(arg);
+    tempArr = [...chat];
+     tempArr.push(arg);
+     setChat(tempArr);
+  })
+  })
+  
+  
 
   return (
     <Page
@@ -142,7 +121,7 @@ const DashboardAnalytics = () => {
           xl={9}
           xs={12}
         >
-          <FinancialStats  prevData={prevData} position={position} actualData={actualData}   />
+          <FinancialStats vuelos={vuelos} prevData={prevData} position={position} actualData={actualData}   />
         </Grid>
         <Grid
           item
@@ -151,7 +130,7 @@ const DashboardAnalytics = () => {
           xs={3}
         >
           {/* <EarningsSegmentation /> */}
-          <ConversationDetails className={classes.top} 
+          <ConversationDetails chat={chat} className={classes.top} 
           /> 
         </Grid>
         <Grid
